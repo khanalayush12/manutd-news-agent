@@ -26,8 +26,8 @@ jobs:
       - name: Run News Agent
         run: |
           python main.py
-      - name: Upload PDF report
+            - name: Upload PDF report
         uses: actions/upload-artifact@v4
         with:
-        name: manutd-report
-        path: "*.pdf"
+          name: manutd-report
+          path: "*.pdf"
