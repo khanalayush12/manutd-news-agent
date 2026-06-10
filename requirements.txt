@@ -1,0 +1,4 @@
+feedparser
+requests
+reportlab
+beautifulsoup4
