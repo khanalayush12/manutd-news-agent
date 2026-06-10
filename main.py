@@ -7,14 +7,30 @@ from news_sources import SOURCES
 
 # ---------- CREDIBILITY SYSTEM ----------
 def score_source(title, source):
+    title = title.lower()
     source = source.lower()
 
-    if "bbc" in source or "manutd.com" in source:
-        return 95
+    score = 50  # base
+
+    # Trusted sources
+    if "bbc" in source:
+        score += 40
     elif "skysports" in source:
-        return 85
-    else:
-        return 70
+        score += 35
+    elif "manutd.com" in source:
+        score += 50
+
+    # Important topics
+    if "transfer" in title:
+        score += 20
+    if "injury" in title:
+        score += 15
+    if "ten hag" in title:
+        score += 10
+    if "rashford" in title or "bruno" in title:
+        score += 10
+
+    return min(score, 100)
 
 # ---------- FETCH NEWS ----------
 def fetch_news():
@@ -23,12 +39,25 @@ def fetch_news():
     for url in SOURCES:
         feed = feedparser.parse(url)
 
-        for entry in feed.entries[:5]:
-            articles.append({
-                "title": entry.title,
-                "source": url,
-                "score": score_source(entry.title, url)
-            })
+        for entry in feed.entries:
+            title = entry.title.lower()
+
+            # ONLY keep Manchester United related news
+            if any(keyword in title for keyword in [
+                "manchester united",
+                "man utd",
+                "man united",
+                "rashford",
+                "bruno",
+                "old trafford",
+                "ten hag",
+                "red devils"
+            ]):
+                articles.append({
+                    "title": entry.title,
+                    "source": url,
+                    "score": score_source(entry.title, url)
+                })
 
     return articles
 
