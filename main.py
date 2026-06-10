@@ -1,17 +1,34 @@
-import feedparser
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from datetime import datetime
 
-feeds = [
-    "https://www.manutd.com/en/rss/news",
-    "https://feeds.bbci.co.uk/sport/football/rss.xml"
+# Dummy Manchester United news (we can upgrade later)
+news = [
+    "Man United linked with new midfielder signing",
+    "Rashford injury update released by club",
+    "Ten Hag press conference ahead of next match",
+    "Manchester United exploring transfer options in January",
+    "Academy player promoted to first team training"
 ]
 
-print("Manchester United News")
+def generate_pdf(news_list):
+    filename = "manutd_report.pdf"
+    c = canvas.Canvas(filename, pagesize=letter)
 
-for feed in feeds:
-    d = feedparser.parse(feed)
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(50, 750, "Manchester United News Report")
 
-    for entry in d.entries[:5]:
-        title = entry.title
+    c.setFont("Helvetica", 12)
+    c.drawString(50, 730, f"Generated: {datetime.now()}")
 
-        if "united" in title.lower() or "manchester" in title.lower():
-            print(title)
+    y = 700
+
+    for i, item in enumerate(news_list[:10], start=1):
+        c.drawString(50, y, f"{i}. {item}")
+        y -= 20
+
+    c.save()
+    print(f"PDF generated: {filename}")
+
+if __name__ == "__main__":
+    generate_pdf(news)
